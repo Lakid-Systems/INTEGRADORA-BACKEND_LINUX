@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from cryptography.fernet import Fernet
 import crud.usersrols, config.db, schemas.usersrols, models.usersrols
-from typing import List
 from jwt_config import solicita_token
 from portadortoken import Portador
 
@@ -11,8 +11,10 @@ f = Fernet(key)
 
 userrol = APIRouter()
 
+# Crear tablas si no existen
 models.usersrols.Base.metadata.create_all(bind=config.db.engine)
 
+# Obtener sesión de base de datos
 def get_db():
     db = config.db.SessionLocal()
     try:
@@ -35,11 +37,10 @@ Devuelve una lista paginada de todas las relaciones entre usuarios y roles.
 """
 )
 def read_usersrols(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    db_usersrols = crud.usersrols.get_usersrols(db=db, skip=skip, limit=limit)
-    return db_usersrols
+    return crud.usersrols.get_usersrols(db=db, skip=skip, limit=limit)
 
 # 🔹 Consultar una asignación específica (PROTEGIDO)
-@userrol.post(
+@userrol.get(
     "/userrol/{id_user}/{id_rol}",
     response_model=schemas.usersrols.UserRol,
     tags=["Usuarios Roles"],
@@ -52,10 +53,10 @@ Devuelve la relación específica entre un usuario y un rol, usando sus IDs.
 - Retorna error 404 si no existe la asignación.
 """
 )
-def read_rol(id_user: int, id_rol: int, db: Session = Depends(get_db)):
+def read_userrol(id_user: int, id_rol: int, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.get_userrol(db=db, id_user=id_user, id_rol=id_rol)
     if db_userrol is None:
-        raise HTTPException(status_code=404, detail="UserRol no existe")
+        raise HTTPException(status_code=404, detail="La asignación usuario-rol no existe.")
     return db_userrol
 
 # 🔹 Crear asignación usuario-rol (PROTEGIDO)
@@ -72,10 +73,10 @@ Asocia un usuario existente con un rol existente.
 - Retorna error 400 si la asignación ya existe.
 """
 )
-def create_user(userrol: schemas.usersrols.UserRolCreate, db: Session = Depends(get_db)):
+def create_userrol(userrol: schemas.usersrols.UserRolCreate, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.get_userrol(db=db, id_user=userrol.Usuario_ID, id_rol=userrol.Rol_ID)
     if db_userrol:
-        raise HTTPException(status_code=400, detail="Usuario existente intenta nuevamente")
+        raise HTTPException(status_code=400, detail="Esta asignación ya existe.")
     return crud.usersrols.create_userrol(db=db, userrol=userrol)
 
 # 🔹 Actualizar asignación usuario-rol (PROTEGIDO)
@@ -89,13 +90,13 @@ def create_user(userrol: schemas.usersrols.UserRolCreate, db: Session = Depends(
 Modifica una relación específica entre un usuario y un rol.
 
 - Protegido por JWT.
-- Retorna error 404 si no se encuentra.
+- Retorna error 404 si no se encuentra la asignación.
 """
 )
-def update_user(id_user: int, id_rol: int, userrol: schemas.usersrols.UserRolUpdate, db: Session = Depends(get_db)):
+def update_userrol(id_user: int, id_rol: int, userrol: schemas.usersrols.UserRolUpdate, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.update_userrol(db=db, id_user=id_user, id_rol=id_rol, userrol=userrol)
     if db_userrol is None:
-        raise HTTPException(status_code=404, detail="Usuario no existe, no actualizado")
+        raise HTTPException(status_code=404, detail="La asignación no existe, no se actualizó.")
     return db_userrol
 
 # 🔹 Eliminar asignación usuario-rol (PROTEGIDO)
@@ -112,8 +113,8 @@ Elimina la relación entre un usuario y un rol.
 - Retorna error 404 si la relación no existe.
 """
 )
-def delete_rol(id_user: int, id_rol: int, db: Session = Depends(get_db)):
+def delete_userrol(id_user: int, id_rol: int, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.delete_userrol(db=db, id_user=id_user, id_rol=id_rol)
     if db_userrol is None:
-        raise HTTPException(status_code=404, detail="Usuario no existe, no se pudo eliminar")
+        raise HTTPException(status_code=404, detail="No se pudo eliminar, la asignación no existe.")
     return db_userrol

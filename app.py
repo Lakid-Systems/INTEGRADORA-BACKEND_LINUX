@@ -69,7 +69,7 @@ from routes.userrol import userrol
 # from routes.cirugia import cirugia_router
 # from routes.horarios import horarios
 # from routes.bitacora import bitacora
-# from routes.departamentos import departamentos
+from routes.departamentos import departamentos
 # from routes.dispensaciones import dispensacion
 # from routes.estudios import estudios
 # from routes.resultados_estudios import resultados_estudios
@@ -93,6 +93,8 @@ app.include_router(consumible)
 app.include_router(area_medica)
 app.include_router(rol)
 app.include_router(userrol)
+app.include_router(departamentos)
+
 
 # 🔹 CREAR LAS TABLAS **DESPUÉS DE REGISTRAR LAS RUTAS**
 print("🔄 Creando las tablas en MySQL si no existen...")

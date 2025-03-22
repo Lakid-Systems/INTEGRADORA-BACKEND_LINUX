@@ -17,6 +17,14 @@ def get_user_by_usuario(db: Session, usuario: str):
     """
     return db.query(models.users.User).filter(models.users.User.Nombre_Usuario == usuario).first()
 
+# 🔹 Obtener un usuario por su correo electrónico
+def get_user_by_email(db: Session, email: str):
+    """
+    Retorna un usuario que coincida exactamente con el correo electrónico.
+    Se utiliza para validar duplicidad antes de registrar uno nuevo.
+    """
+    return db.query(models.users.User).filter(models.users.User.Correo_Electronico == email).first()
+
 # 🔹 Validar credenciales (login por usuario, correo o teléfono + contraseña)
 def get_user_by_creentials(db: Session, username: str, correo: str, telefono: str, password: str):
     """
