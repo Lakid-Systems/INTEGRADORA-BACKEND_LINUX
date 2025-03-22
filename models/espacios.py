@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 import enum
 import datetime
 
+# 🔹 Enumeración de tipos de espacios disponibles en el hospital
 class TipoEspacioEnum(str, enum.Enum):
     Consultorio = 'Consultorio'
     Laboratorio = 'Laboratorio'
@@ -26,22 +27,53 @@ class TipoEspacioEnum(str, enum.Enum):
     Recepción = 'Recepción'
     Piso = 'Piso'
 
+# 🔹 Enumeración para el estatus del espacio
 class EstatusEnum(str, enum.Enum):
     Activo = 'Activo'
     Inactivo = 'Inactivo'
 
+# 🔹 Modelo que representa un espacio físico dentro del hospital
 class Espacio(Base):
-    __tablename__ = 'tbc_espacios'
+    __tablename__ = 'tbc_espacios'  # Nombre de la tabla en la base de datos
 
+    # ID único del espacio (PK)
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    tipo = Column(Enum(TipoEspacioEnum), nullable=False)
-    nombre = Column(String(100), nullable=False)
-    departamento_id = Column(Integer, ForeignKey("tbc_departamentos.id", ondelete="SET NULL"), nullable=True, index=True)
-    estatus = Column(Enum(EstatusEnum), nullable=False, default=EstatusEnum.Activo)
-    fecha_registro = Column(DateTime, default=datetime.datetime.utcnow)
-    fecha_actualizacion = Column(DateTime, nullable=True, onupdate=datetime.datetime.utcnow)
-    capacidad = Column(Integer, nullable=True)
-    espacio_superior_id = Column(Integer, ForeignKey("tbc_espacios.id", ondelete="SET NULL"), nullable=True)
 
-    # Relación con Servicios Médicos Espacios
-    servicios_medicos_espacios = relationship("ServiciosMedicosEspacios", back_populates="espacio") 
+    # Tipo de espacio según la enumeración definida (obligatorio)
+    tipo = Column(Enum(TipoEspacioEnum), nullable=False)
+
+    # Nombre identificador del espacio (ej: "Consultorio 3B", "Quirófano 2")
+    nombre = Column(String(100), nullable=False)
+
+    # ID del departamento al que pertenece (relación externa, opcional)
+    departamento_id = Column(
+        Integer,
+        ForeignKey("tbc_departamentos.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True
+    )
+
+    # Estado del espacio (Activo o Inactivo)
+    estatus = Column(Enum(EstatusEnum), nullable=False, default=EstatusEnum.Activo)
+
+    # Fecha de creación del registro (por defecto: ahora)
+    fecha_registro = Column(DateTime, default=datetime.datetime.utcnow)
+
+    # Fecha de última actualización del espacio
+    fecha_actualizacion = Column(DateTime, nullable=True, onupdate=datetime.datetime.utcnow)
+
+    # Capacidad máxima del espacio (opcional)
+    capacidad = Column(Integer, nullable=True)
+
+    # ID del espacio superior (jerarquía, opcional)
+    espacio_superior_id = Column(
+        Integer,
+        ForeignKey("tbc_espacios.id", ondelete="SET NULL"),
+        nullable=True
+    )
+
+    # 🔗 Relación con tabla intermedia Servicios Médicos Espacios
+    servicios_medicos_espacios = relationship(
+        "ServiciosMedicosEspacios",
+        back_populates="espacio"
+    )
