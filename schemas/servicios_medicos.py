@@ -1,19 +1,20 @@
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 
 class ServiceMBase(BaseModel):
-    nombre: str = Field(..., example="Consulta General")  # Nombre del servicio
-    descripcion: Optional[str] = Field(None, example="Atención médica general para diagnóstico y evaluación.")  # Breve descripción
-    observaciones: Optional[str] = Field(None, example="Este servicio se brinda de lunes a viernes de 8 AM a 5 PM.")  # Notas adicionales
-    fecha_registro: Optional[datetime] = Field(None, example="2025-03-21T22:19:44.610Z")  # Fecha de creación del registro
-    fecha_actualizacion: Optional[datetime] = Field(None, example="2025-03-21T22:19:44.610Z")  # Última modificación
+    nombre: str = Field(..., example="Consulta General")
+    descripcion: Optional[str] = Field(None, example="Atención médica general para diagnóstico y evaluación.")
+    observaciones: Optional[str] = Field(None, example="Este servicio se brinda de lunes a viernes de 8 AM a 5 PM.")
+    fecha_registro: Optional[datetime] = Field(None, example="2025-03-21T22:19:44.610Z")
+    fecha_actualizacion: Optional[datetime] = Field(None, example="2025-03-21T22:19:44.610Z")
 
 class ServiceMCreate(ServiceMBase):
     """Modelo para la creación de un servicio médico"""
     pass
 
-class ServiceMUpdate(BaseModel):  
+class ServiceMUpdate(BaseModel):
     """Modelo para la actualización de un servicio médico"""
     nombre: Optional[str] = Field(None, example="Consulta Pediátrica")
     descripcion: Optional[str] = Field(None, example="Consulta médica especializada en niños y adolescentes.")
@@ -22,5 +23,5 @@ class ServiceMUpdate(BaseModel):
 
 class Service(ServiceMBase):
     """Modelo para la respuesta al consultar un servicio médico"""
-    id: int = Field(..., example=10)  # ID único del servicio médico
+    id: UUID = Field(..., example="b3c7e9b2-8429-4c71-ae68-61c30269c237")
     model_config = ConfigDict(from_attributes=True)

@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
+from uuid import UUID
+
 
 class AreaMedicaBase(BaseModel):
     Nombre: str
@@ -19,7 +21,7 @@ class AreaMedicaUpdate(BaseModel):
     Fecha_Actualizacion: Optional[datetime] = Field(None, description="(Opcional) Se actualiza automáticamente si no se envía.")
 
 class AreaMedica(AreaMedicaBase):
-    ID: str
+    ID: UUID = Field(..., example="9b4e1bc0-8129-4cf5-9e7c-1c802e60decd")
 
     class Config:
         from_attributes = True

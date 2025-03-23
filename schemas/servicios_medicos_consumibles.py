@@ -1,10 +1,11 @@
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
+from uuid import UUID
 
 class ServiciosMedicosConsumiblesBase(BaseModel):
-    id_servicio: int
-    id_consumible: int
+    id_servicio: UUID
+    id_consumible: UUID
     cantidad_usada: int
     fecha_uso: Optional[datetime] = None
     observaciones: Optional[str] = None
@@ -18,6 +19,6 @@ class ServiciosMedicosConsumiblesUpdate(BaseModel):
     observaciones: Optional[str] = None
 
 class ServiciosMedicosConsumibles(ServiciosMedicosConsumiblesBase):
-    id: int
+    id: UUID
 
-    model_config = ConfigDict(from_attributes=True) 
+    model_config = ConfigDict(from_attributes=True)

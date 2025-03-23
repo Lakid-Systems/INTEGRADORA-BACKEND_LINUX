@@ -2,13 +2,16 @@ from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from config.db import Base
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+
 
 # 🔹 Modelo que representa los insumos o materiales médicos consumibles del hospital
 class Consumible(Base):
     __tablename__ = "tbc_consumibles"  # Nombre de la tabla en la base de datos
 
     # ID único del consumible (PK)
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
 
     # Nombre del consumible (ej: "Guantes", "Jeringas")
     nombre = Column(String(100), nullable=False)

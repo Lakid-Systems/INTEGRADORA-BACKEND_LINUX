@@ -3,6 +3,9 @@ from sqlalchemy.orm import relationship
 from config.db import Base
 import enum
 from datetime import datetime
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+
 
 # 🔹 Enumeración de estados posibles para la cuenta de usuario
 class MyEstatus(str, enum.Enum):
@@ -16,10 +19,10 @@ class User(Base):
     __tablename__ = "tbb_usuarios"  # Nombre de la tabla en la base de datos
 
     # ID único del usuario (PK)
-    ID = Column(Integer, primary_key=True, index=True)
+    ID = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
 
-    # Relación con la tabla tbb_personas (FK)
-    Persona_ID = Column(Integer, ForeignKey("tbb_personas.ID"), nullable=False)
+    # Relación con el modelo de persona (1 a 1)
+    Persona_ID = Column(UUID(as_uuid=True), ForeignKey("tbb_personas.ID"), nullable=False)
 
     # Relación ORM: un usuario está vinculado a una persona
     persona = relationship("Person", back_populates="usuario")  # Relación inversa en Person

@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime, date
+from uuid import UUID
+
 
 class PersonBase(BaseModel):
     Titulo_Cortesia: str = Field(..., example="Dr.")  # Prefijo de cortesía (Ej: Dr., Sr., Sra.)
@@ -28,7 +30,7 @@ class PersonUpdate(PersonBase):
 
 class Person(PersonBase):
     """Modelo para la respuesta al consultar una persona"""
-    ID: int = Field(..., example=1001)  # ID único de la persona
+    ID: UUID = Field(..., example="3fa85f64-5717-4562-b3fc-2c963f66afa6")
 
     class Config:
         from_attributes = True

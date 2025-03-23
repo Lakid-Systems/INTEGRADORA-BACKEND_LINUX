@@ -2,13 +2,15 @@ from sqlalchemy import Column, String, Text, DateTime, Boolean, text
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
 from datetime import datetime
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
 
 Base = declarative_base()
 
 class AreaMedica(Base):
     __tablename__ = "tbc_areas_medicas"
 
-    ID = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()), nullable=False)
+    ID = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     Nombre = Column(String(150), nullable=False)
     Descripcion = Column(Text, nullable=True)
     

@@ -2,13 +2,16 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.dialects.mysql import LONGTEXT
 from sqlalchemy.orm import relationship
 from config.db import Base
+import uuid
+from sqlalchemy.dialects.postgresql import UUID
+
 
 # 🔹 Modelo que representa los roles del sistema (ej: Administrador, Médico, Recepcionista)
 class Rol(Base):
     __tablename__ = "tbc_roles"  # Nombre de la tabla en la base de datos
 
     # ID único del rol (PK)
-    ID = Column(Integer, primary_key=True, index=True)
+    ID = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
 
     # Nombre del rol (ej: "Administrador", "Enfermero")
     Nombre = Column(String(60), nullable=False)

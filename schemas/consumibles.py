@@ -1,19 +1,20 @@
 from typing import Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
+from uuid import UUID
 
 class ConsumibleBase(BaseModel):
-    nombre: str = Field(..., example="Guantes de látex")  # Nombre del consumible
-    descripcion: str = Field(..., example="Guantes estériles de un solo uso, talla mediana")  # Descripción del producto
-    tipo: str = Field(..., example="Material Quirúrgico")  # Tipo de insumo (Ej: Medicamento, Instrumental, etc.)
-    departamento: str = Field(..., example="Cirugía")  # Departamento que lo gestiona
-    cantidad_existencia: int = Field(..., example=150)  # Cantidad disponible en inventario
-    detalle: Optional[str] = Field(None, example="Caja con 100 unidades")  # Detalle adicional
-    estatus: Optional[bool] = Field(None, example=True)  # Activo (True) o Inactivo (False)
-    observaciones: Optional[str] = Field(None, example="Usar antes del 2025-12-01")  # Notas internas
-    espacio_medico: Optional[str] = Field(None, example="Almacén Central")  # Ubicación física dentro del hospital
-    fecha_registro: Optional[datetime] = Field(None, example="2025-03-21T22:19:44.610Z")  # Fecha de ingreso
-    fecha_actualizacion: Optional[datetime] = Field(None, example="2025-04-01T10:00:00.000Z")  # Última modificación
+    nombre: str = Field(..., example="Guantes de látex")
+    descripcion: str = Field(..., example="Guantes estériles de un solo uso, talla mediana")
+    tipo: str = Field(..., example="Material Quirúrgico")
+    departamento: str = Field(..., example="Cirugía")
+    cantidad_existencia: int = Field(..., example=150)
+    detalle: Optional[str] = Field(None, example="Caja con 100 unidades")
+    estatus: Optional[bool] = Field(None, example=True)
+    observaciones: Optional[str] = Field(None, example="Usar antes del 2025-12-01")
+    espacio_medico: Optional[str] = Field(None, example="Almacén Central")
+    fecha_registro: Optional[datetime] = Field(None, example="2025-03-21T22:19:44.610Z")
+    fecha_actualizacion: Optional[datetime] = Field(None, example="2025-04-01T10:00:00.000Z")
 
 class ConsumibleCreate(ConsumibleBase):
     """Modelo para la creación de un consumible médico"""
@@ -34,7 +35,7 @@ class ConsumibleUpdate(BaseModel):
 
 class Consumible(ConsumibleBase):
     """Modelo para la respuesta al consultar un consumible médico"""
-    id: int = Field(..., example=501)  # ID único del consumible
+    id: UUID = Field(..., example="3e79d145-397a-4e50-bb74-8c6a88c93fa2")
 
     class Config:
         orm_mode = True

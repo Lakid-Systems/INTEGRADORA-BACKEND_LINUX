@@ -1,6 +1,8 @@
 from typing import List, Union
 from pydantic import BaseModel, Field
 from datetime import datetime
+from uuid import UUID
+
 
 class RolBase(BaseModel):
     Nombre: str = Field(..., example="Administrador")  # Nombre del rol del sistema
@@ -19,7 +21,7 @@ class RolUpdate(RolBase):
 
 class Rol(RolBase):
     """Modelo para la respuesta al consultar un rol"""
-    ID: int = Field(..., example=1)  # ID único del rol
+    ID: UUID = Field(..., example="f47ac10b-58cc-4372-a567-0e02b2c3d479")
 
     class Config:
         orm_mode = True
