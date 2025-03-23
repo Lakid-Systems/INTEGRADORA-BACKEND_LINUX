@@ -1,16 +1,14 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, func
+from sqlalchemy import Column, String, Text, DateTime, func
 from sqlalchemy.orm import relationship
 from config.db import Base
 import uuid
-from sqlalchemy.dialects.postgresql import UUID
-
 
 # 🔹 Modelo para los servicios médicos del hospital
 class ServiceM(Base):
     __tablename__ = "tbc_servicios_medicos"  # Nombre de la tabla en la base de datos
 
-    # ID autoincremental del servicio médico (PK)
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    # ID único del servicio médico (PK, UUID como string)
+    id = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
 
     # Nombre del servicio (único y obligatorio)
     nombre = Column(String(100), nullable=False, unique=True)
@@ -31,4 +29,4 @@ class ServiceM(Base):
     consumibles = relationship("ServiciosMedicosConsumibles", back_populates="servicio")
 
     # 🔗 Relación con tabla Servicios Médicos Espacios (1:N)
-    espacios = relationship("ServiciosMedicosEspacios", back_populates="servicio")  
+    espacios = relationship("ServiciosMedicosEspacios", back_populates="servicio")

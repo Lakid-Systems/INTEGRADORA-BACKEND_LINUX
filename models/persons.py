@@ -1,10 +1,9 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, Enum, Date, text
+import enum
+import uuid
+from datetime import datetime, date
+from sqlalchemy import Column, String, Boolean, DateTime, Enum, Date, text
 from sqlalchemy.orm import relationship
 from config.db import Base
-import enum
-from datetime import datetime
-import uuid
-from sqlalchemy.dialects.postgresql import UUID
 
 # 🔹 Enumeración para los géneros disponibles
 class MyGenero(str, enum.Enum):
@@ -27,8 +26,8 @@ class MySangre(str, enum.Enum):
 class Person(Base):
     __tablename__ = "tbb_personas"  # Nombre de la tabla en la base de datos
 
-    # ID único de la persona (PK)
-    ID = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
+    # ID único de la persona (PK, UUID como string)
+    ID = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
 
     # Relación con el modelo de usuario (1 a 1)
     usuario = relationship("User", back_populates="persona", uselist=False)  # Relación inversa con User
