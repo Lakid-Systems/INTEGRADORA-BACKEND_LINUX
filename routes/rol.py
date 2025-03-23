@@ -39,7 +39,7 @@ def read_rols(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return db_rols
 
 # 🔹 Consultar rol por ID (PROTEGIDO)
-@rol.post(
+@rol.get(
     "/rol/{id}",
     response_model=schemas.rols.Rol,
     tags=["Roles"],
@@ -57,6 +57,7 @@ def read_rol(id: int, db: Session = Depends(get_db)):
     if db_rol is None:
         raise HTTPException(status_code=404, detail="Rol not found")
     return db_rol
+
 
 # 🔹 Crear nuevo rol (PROTEGIDO)
 @rol.post(
