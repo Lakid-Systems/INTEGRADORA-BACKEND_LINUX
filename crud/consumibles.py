@@ -1,55 +1,91 @@
+"""Módulo CRUD para operaciones relacionadas con consumibles médicos."""
+
+from sqlalchemy.orm import Session
 import models.consumibles
 import schemas.consumibles
-from sqlalchemy.orm import Session
 
-# 🔹 Obtener un consumible por su ID
-def get_consumible(db: Session, id: int):
-    """
-    Retorna un consumible por su identificador único (ID).
-    """
-    return db.query(models.consumibles.Consumible).filter(models.consumibles.Consumible.id == id).first()
-
-# 🔹 Obtener un consumible por su nombre
-def get_consumibles_by_nombre(db: Session, nombre: str):
-    """
-    Retorna el primer consumible que coincida exactamente con el nombre proporcionado.
-    """
-    return db.query(models.consumibles.Consumible).filter(models.consumibles.Consumible.nombre == nombre).first()
-
-# 🔹 Obtener todos los consumibles (con paginación)
 def get_consumibles(db: Session, skip: int = 0, limit: int = 10):
     """
-    Retorna una lista paginada de consumibles disponibles.
+    Obtiene una lista paginada de consumibles.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        skip (int): Cantidad de registros a omitir.
+        limit (int): Cantidad máxima de registros a retornar.
+
+    Returns:
+        List[Consumible]: Lista de consumibles.
     """
     return db.query(models.consumibles.Consumible).offset(skip).limit(limit).all()
 
-# 🔹 Crear un nuevo consumible
+
+def get_consumible(db: Session, id: int):  # pylint: disable=redefined-builtin
+    """
+    Obtiene un consumible por su ID.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        id (int): Identificador del consumible.
+
+    Returns:
+        Consumible: Instancia encontrada o None.
+    """
+    return db.query(models.consumibles.Consumible).filter(
+        models.consumibles.Consumible.id == id
+    ).first()
+
+
+def get_consumibles_by_nombre(db: Session, nombre: str):
+    """
+    Obtiene un consumible por su nombre.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        nombre (str): Nombre del consumible.
+
+    Returns:
+        Consumible: Instancia encontrada o None.
+    """
+    return db.query(models.consumibles.Consumible).filter(
+        models.consumibles.Consumible.nombre == nombre
+    ).first()
+
+
 def create_consumible(db: Session, consumible: schemas.consumibles.ConsumibleCreate):
     """
-    Registra un nuevo consumible en la base de datos.
+    Crea un nuevo consumible.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        consumible (ConsumibleCreate): Datos del nuevo consumible.
+
+    Returns:
+        Consumible: Instancia creada.
     """
-    db_consumible = models.consumibles.Consumible(
-        nombre=consumible.nombre,
-        descripcion=consumible.descripcion,
-        tipo=consumible.tipo,
-        departamento=consumible.departamento,
-        cantidad_existencia=consumible.cantidad_existencia,
-        detalle=consumible.detalle,
-        estatus=consumible.estatus,
-        observaciones=consumible.observaciones,
-        espacio_medico=consumible.espacio_medico
-    )
+    db_consumible = models.consumibles.Consumible(**consumible.dict())
     db.add(db_consumible)
     db.commit()
     db.refresh(db_consumible)
     return db_consumible
 
-# 🔹 Actualizar un consumible existente
-def update_consumible(db: Session, id: int, consumible: schemas.consumibles.ConsumibleUpdate):
+
+def update_consumible(
+    db: Session, id: int, consumible: schemas.consumibles.ConsumibleUpdate
+):  # pylint: disable=redefined-builtin
     """
-    Actualiza los campos del consumible especificado. Solo modifica los datos enviados.
+    Actualiza un consumible existente.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        id (int): ID del consumible a actualizar.
+        consumible (ConsumibleUpdate): Datos nuevos a aplicar.
+
+    Returns:
+        Consumible: Instancia actualizada o None.
     """
-    db_consumible = db.query(models.consumibles.Consumible).filter(models.consumibles.Consumible.id == id).first()
+    db_consumible = db.query(models.consumibles.Consumible).filter(
+        models.consumibles.Consumible.id == id
+    ).first()
     if db_consumible:
         for key, value in consumible.dict(exclude_unset=True).items():
             setattr(db_consumible, key, value)
@@ -57,12 +93,21 @@ def update_consumible(db: Session, id: int, consumible: schemas.consumibles.Cons
         db.refresh(db_consumible)
     return db_consumible
 
-# 🔹 Eliminar un consumible por ID
-def delete_consumible(db: Session, id: int):
+
+def delete_consumible(db: Session, id: int):  # pylint: disable=redefined-builtin
     """
-    Elimina un consumible de la base de datos según su ID.
+    Elimina un consumible por su ID.
+
+    Args:
+        db (Session): Sesión de base de datos.
+        id (int): ID del consumible a eliminar.
+
+    Returns:
+        Consumible: Instancia eliminada o None.
     """
-    db_consumible = db.query(models.consumibles.Consumible).filter(models.consumibles.Consumible.id == id).first()
+    db_consumible = db.query(models.consumibles.Consumible).filter(
+        models.consumibles.Consumible.id == id
+    ).first()
     if db_consumible:
         db.delete(db_consumible)
         db.commit()

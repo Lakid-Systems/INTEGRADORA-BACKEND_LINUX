@@ -5,4 +5,4 @@ from models.departamentos import Departamentos
 from models.espacios import Espacio
 from models.consumibles import Consumible  
 from models.servicios_medicos_espacios import ServiciosMedicosEspacios
-from models.servicios_medicos_consumibles import ServiciosMedicosConsumibles  # <-- Agregado aquí
+from models.servicios_medicos_consumibles import ServiciosMedicosConsumibles  

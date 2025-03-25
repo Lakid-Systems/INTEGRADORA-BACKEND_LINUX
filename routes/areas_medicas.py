@@ -1,21 +1,31 @@
+# pylint: disable=too-many-arguments, redefined-builtin
+"""Rutas de FastAPI para gestionar las áreas médicas del sistema."""
+
+
+from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from typing import List
-import crud.areas_medicas, config.db, schemas.areas_medicas, models.areas_medicas
+import crud.areas_medicas
+import config.db
+import schemas.areas_medicas
+import models.areas_medicas
 from portadortoken import Portador
 
 area_medica = APIRouter()
 
+# Crear las tablas si no existen
 models.areas_medicas.Base.metadata.create_all(bind=config.db.engine)
 
 def get_db():
+    """
+    Dependencia para obtener una sesión de base de datos.
+    """
     db = config.db.SessionLocal()
     try:
         yield db
     finally:
         db.close()
 
-# 🔹 Obtener todas las áreas médicas (PROTEGIDO)
 @area_medica.get(
     "/areas_medicas/",
     response_model=List[schemas.areas_medicas.AreaMedica],
@@ -30,9 +40,12 @@ Devuelve una lista de todas las áreas médicas registradas en el sistema.
 """
 )
 def read_areas_medicas(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    """
+    Endpoint para obtener todas las áreas médicas (protegido).
+    """
     return crud.areas_medicas.get_areas_medicas(db=db, skip=skip, limit=limit)
 
-# 🔹 Obtener un área médica por ID (PROTEGIDO)
+
 @area_medica.get(
     "/area_medica/{id}",
     response_model=schemas.areas_medicas.AreaMedica,
@@ -47,12 +60,15 @@ Obtiene los detalles de una área médica específica a partir de su ID.
 """
 )
 def read_area_medica(id: str, db: Session = Depends(get_db)):
+    """
+    Endpoint para consultar un área médica por ID (protegido).
+    """
     db_area = crud.areas_medicas.get_area_medica(db=db, id=id)
     if db_area is None:
         raise HTTPException(status_code=404, detail="Área médica no encontrada")
     return db_area
 
-# 🔹 Crear una nueva área médica (LIBRE)
+
 @area_medica.post(
     "/areas_medicas/",
     response_model=schemas.areas_medicas.AreaMedica,
@@ -65,13 +81,19 @@ Crea una nueva área médica en el sistema.
 - Valida que no exista otra área médica con el mismo nombre.
 """
 )
-def create_area_medica(area: schemas.areas_medicas.AreaMedicaCreate, db: Session = Depends(get_db)):
+def create_area_medica(
+    area: schemas.areas_medicas.AreaMedicaCreate,
+    db: Session = Depends(get_db)
+):
+    """
+    Endpoint para crear un área médica (libre).
+    """
     db_area = crud.areas_medicas.get_area_medica_by_nombre(db, nombre=area.Nombre)
     if db_area:
         raise HTTPException(status_code=400, detail="El nombre del área médica ya existe")
     return crud.areas_medicas.create_area_medica(db=db, area=area)
 
-# 🔹 Actualizar un área médica (PROTEGIDO)
+
 @area_medica.put(
     "/area_medica/{id}",
     response_model=schemas.areas_medicas.AreaMedica,
@@ -85,13 +107,23 @@ Actualiza los datos de una área médica existente en el sistema.
 - Retorna error 404 si el área médica no existe.
 """
 )
-def update_area_medica(id: str, area: schemas.areas_medicas.AreaMedicaUpdate, db: Session = Depends(get_db)):
+def update_area_medica(
+    id: str,
+    area: schemas.areas_medicas.AreaMedicaUpdate,
+    db: Session = Depends(get_db)
+):
+    """
+    Endpoint para actualizar un área médica (protegido).
+    """
     db_area = crud.areas_medicas.update_area_medica(db=db, id=id, area=area)
     if db_area is None:
-        raise HTTPException(status_code=404, detail="Área médica no encontrada, no se pudo actualizar")
+        raise HTTPException(
+            status_code=404,
+            detail="Área médica no encontrada, no se pudo actualizar"
+        )
     return db_area
 
-# 🔹 Eliminar un área médica (PROTEGIDO)
+
 @area_medica.delete(
     "/area_medica/{id}",
     response_model=schemas.areas_medicas.AreaMedica,
@@ -106,7 +138,13 @@ Elimina una área médica existente por su ID.
 """
 )
 def delete_area_medica(id: str, db: Session = Depends(get_db)):
+    """
+    Endpoint para eliminar un área médica (protegido).
+    """
     db_area = crud.areas_medicas.delete_area_medica(db=db, id=id)
     if db_area is None:
-        raise HTTPException(status_code=404, detail="Área médica no encontrada, no se pudo eliminar")
+        raise HTTPException(
+            status_code=404,
+            detail="Área médica no encontrada, no se pudo eliminar"
+        )
     return db_area
