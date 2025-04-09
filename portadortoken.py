@@ -15,9 +15,24 @@ def get_db():
 
 class Portador(HTTPBearer):
     async def _call_(self, request: Request, db: Session = Depends(get_db)):
+        # Obtener el token del encabezado Authorization
         autorizacion = await super()._call_(request)
-        dato = valida_token(autorizacion.credentials)
-        db_userlogin = crud.users.get_user_by_credentials(db, username=dato["Nombre_Usuario"], correo=dato["Correo"])
+        
+        # Validar el token y extraer el payload
+        try:
+            dato = valida_token(autorizacion.credentials)
+        except Exception as e:
+            raise HTTPException(status_code=401, detail="Token inválido o expirado")
+        
+        # Obtener el user_id del payload (en lugar de detalles sensibles)
+        user_id = dato.get("user_id", None)
+        
+        if user_id is None:
+            raise HTTPException(status_code=404, detail="ID de usuario no encontrado en el token")
+        
+        # Consultar la base de datos para obtener el usuario con el user_id
+        db_userlogin = crud.users.get_user_by_id(db, user_id)
         if db_userlogin is None:
-            raise HTTPException(status_code=404, detail="LogIn incorrecto")
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+        
         return db_userlogin
