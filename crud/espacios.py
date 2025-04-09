@@ -5,13 +5,13 @@ from sqlalchemy.orm import Session
 import models.espacios as models
 import schemas.espacios as schemas
 
-def get_espacio(db: Session, espacio_id: int):
+def get_espacio(db: Session, espacio_id: str):
     """
     Retorna un espacio según su ID.
 
     Args:
         db (Session): Sesión de base de datos.
-        espacio_id (int): ID del espacio.
+        espacio_id (str): ID del espacio.
 
     Returns:
         Espacio: Instancia encontrada o None.
@@ -66,13 +66,13 @@ def create_espacio(db: Session, espacio: schemas.EspacioCreate):
     return db_espacio
 
 
-def update_espacio(db: Session, espacio_id: int, espacio: schemas.EspacioUpdate):
+def update_espacio(db: Session, espacio_id: str, espacio: schemas.EspacioUpdate):
     """
     Actualiza los campos de un espacio existente.
 
     Args:
         db (Session): Sesión de base de datos.
-        espacio_id (int): ID del espacio a modificar.
+        espacio_id (str): ID del espacio a modificar.
         espacio (EspacioUpdate): Datos a actualizar.
 
     Returns:
@@ -95,13 +95,13 @@ def update_espacio(db: Session, espacio_id: int, espacio: schemas.EspacioUpdate)
     return db_espacio
 
 
-def delete_espacio(db: Session, espacio_id: int):
+def delete_espacio(db: Session, espacio_id: str):
     """
     Elimina un espacio de la base de datos si existe.
 
     Args:
         db (Session): Sesión de base de datos.
-        espacio_id (int): ID del espacio a eliminar.
+        espacio_id (str): ID del espacio a eliminar.
 
     Returns:
         Espacio: Instancia eliminada o None si no se encontró.

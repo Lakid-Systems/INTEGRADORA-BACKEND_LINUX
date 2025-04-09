@@ -84,7 +84,7 @@ def read_users(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     summary="Consultar usuario por ID",
     description="Retorna la información del usuario correspondiente al ID proporcionado."
 )
-def read_user(id: int, db: Session = Depends(get_db)):
+def read_user(id: str, db: Session = Depends(get_db)):
     db_user = crud.users.get_user(db=db, id=id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -98,7 +98,7 @@ def read_user(id: int, db: Session = Depends(get_db)):
     summary="Actualizar usuario",
     description="Actualiza los datos de un usuario existente por su ID."
 )
-def update_user(id: int, user: schemas.users.UserUpdate, db: Session = Depends(get_db)):
+def update_user(id: str, user: schemas.users.UserUpdate, db: Session = Depends(get_db)):
     db_user = crud.users.update_user(db=db, id=id, user=user)
     if db_user is None:
         raise HTTPException(status_code=404, detail="Usuario no existe, no actualizado")
@@ -112,7 +112,7 @@ def update_user(id: int, user: schemas.users.UserUpdate, db: Session = Depends(g
     summary="Eliminar usuario",
     description="Elimina un usuario del sistema por su ID."
 )
-def delete_user(id: int, db: Session = Depends(get_db)):
+def delete_user(id: str, db: Session = Depends(get_db)):
     db_user = crud.users.delete_user(db=db, id=id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="Usuario no existe, no se pudo eliminar")

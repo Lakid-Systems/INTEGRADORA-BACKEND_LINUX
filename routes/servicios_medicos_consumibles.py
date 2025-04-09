@@ -16,9 +16,6 @@ servicios_medicos_consumibles = APIRouter()
 models.servicios_medicos_consumibles.Base.metadata.create_all(bind=config.db.engine)
 
 def get_db():
-    """
-    Dependencia para obtener una sesión de base de datos.
-    """
     db = config.db.SessionLocal()
     try:
         yield db
@@ -31,16 +28,8 @@ def get_db():
     tags=["Servicios Médicos Consumibles"],
     dependencies=[Depends(Portador())]
 )
-def read_servicios_medicos_consumibles(
-    skip: int = 0,
-    limit: int = 10,
-    db: Session = Depends(get_db)
-):
-    """
-    Lista todos los consumibles utilizados en servicios médicos (paginado).
-    """
+def read_servicios_medicos_consumibles(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.servicios_medicos_consumibles.get_all(db=db, skip=skip, limit=limit)
-
 
 @servicios_medicos_consumibles.get(
     "/servicio-medico-consumible/{id}",
@@ -48,15 +37,11 @@ def read_servicios_medicos_consumibles(
     tags=["Servicios Médicos Consumibles"],
     dependencies=[Depends(Portador())]
 )
-def read_servicio_medico_consumible(id: int, db: Session = Depends(get_db)):
-    """
-    Consulta un registro específico por ID.
-    """
+def read_servicio_medico_consumible(id: str, db: Session = Depends(get_db)):
     record = crud.servicios_medicos_consumibles.get_by_id(db=db, id=id)
     if record is None:
         raise HTTPException(status_code=404, detail="Registro no encontrado")
     return record
-
 
 @servicios_medicos_consumibles.post(
     "/servicio-medico-consumible/",
@@ -67,11 +52,7 @@ def create_servicio_medico_consumible(
     data: schemas.servicios_medicos_consumibles.ServiciosMedicosConsumiblesCreate,
     db: Session = Depends(get_db)
 ):
-    """
-    Crea un nuevo registro de consumo de servicio médico.
-    """
     return crud.servicios_medicos_consumibles.create(db=db, data=data)
-
 
 @servicios_medicos_consumibles.put(
     "/servicio-medico-consumible/{id}",
@@ -80,18 +61,14 @@ def create_servicio_medico_consumible(
     dependencies=[Depends(Portador())]
 )
 def update_servicio_medico_consumible(
-    id: int,
+    id: str,
     data: schemas.servicios_medicos_consumibles.ServiciosMedicosConsumiblesUpdate,
     db: Session = Depends(get_db)
 ):
-    """
-    Actualiza un registro de servicio médico-consumible por ID.
-    """
     updated_record = crud.servicios_medicos_consumibles.update(db=db, id=id, data=data)
     if updated_record is None:
         raise HTTPException(status_code=404, detail="Registro no encontrado")
     return updated_record
-
 
 @servicios_medicos_consumibles.delete(
     "/servicio-medico-consumible/{id}",
@@ -99,10 +76,7 @@ def update_servicio_medico_consumible(
     tags=["Servicios Médicos Consumibles"],
     dependencies=[Depends(Portador())]
 )
-def delete_servicio_medico_consumible(id: int, db: Session = Depends(get_db)):
-    """
-    Elimina un registro por ID.
-    """
+def delete_servicio_medico_consumible(id: str, db: Session = Depends(get_db)):
     deleted_record = crud.servicios_medicos_consumibles.delete(db=db, id=id)
     if deleted_record is None:
         raise HTTPException(status_code=404, detail="Registro no encontrado")

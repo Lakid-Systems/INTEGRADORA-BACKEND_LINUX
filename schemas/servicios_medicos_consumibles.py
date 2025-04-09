@@ -2,7 +2,6 @@
 """Esquemas Pydantic para Servicios Médicos Consumibles."""
 
 from datetime import datetime
-from uuid import UUID
 from typing import Optional
 from pydantic import BaseModel, ConfigDict
 
@@ -10,8 +9,8 @@ from pydantic import BaseModel, ConfigDict
 class ServiciosMedicosConsumiblesBase(BaseModel):
     """Esquema base para consumibles usados en servicios médicos."""
 
-    id_servicio: UUID
-    id_consumible: UUID
+    id_servicio: str
+    id_consumible: str
     cantidad_usada: int
     fecha_uso: Optional[datetime] = None
     observaciones: Optional[str] = None
@@ -32,6 +31,6 @@ class ServiciosMedicosConsumiblesUpdate(BaseModel):
 class ServiciosMedicosConsumibles(ServiciosMedicosConsumiblesBase):
     """Modelo de respuesta con ID incluido."""
 
-    id: UUID
+    id: str
 
     model_config = ConfigDict(from_attributes=True)

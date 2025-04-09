@@ -4,7 +4,7 @@ import schemas.departamentos as schemas
 from datetime import datetime
 
 # 🔹 Obtener un departamento por ID
-def get_departamento(db: Session, departamento_id: int):
+def get_departamento(db: Session, departamento_id: str):
     return db.query(models.Departamentos).filter(models.Departamentos.id == departamento_id).first()
 
 # 🔹 Obtener todos los departamentos con paginación
@@ -31,7 +31,7 @@ def create_departamento(db: Session, departamento: schemas.DepartamentoCreate):
     return db_departamento
 
 # 🔹 Actualizar un departamento por ID
-def update_departamento(db: Session, departamento_id: int, departamento_data: schemas.DepartamentoUpdate):
+def update_departamento(db: Session, departamento_id: str, departamento_data: schemas.DepartamentoUpdate):
     db_departamento = db.query(models.Departamentos).filter(models.Departamentos.id == departamento_id).first()
     if db_departamento:
         for var, value in departamento_data.dict(exclude_unset=True).items():
@@ -47,7 +47,7 @@ def update_departamento(db: Session, departamento_id: int, departamento_data: sc
     return db_departamento
 
 # 🔹 Eliminar un departamento por ID
-def delete_departamento(db: Session, departamento_id: int):
+def delete_departamento(db: Session, departamento_id: str):
     db_departamento = db.query(models.Departamentos).filter(models.Departamentos.id == departamento_id).first()
     if db_departamento:
         try:

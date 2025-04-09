@@ -34,7 +34,7 @@ class ServiciosMedicosConsumibles(Base):
     fecha_uso = Column(
         DateTime,
         nullable=False,
-        server_default=func.now()  # pylint: disable=not-callable
+        server_default=func.now()
     )
     observaciones = Column(Text, nullable=True)
 

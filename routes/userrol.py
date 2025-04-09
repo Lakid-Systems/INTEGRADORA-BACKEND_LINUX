@@ -53,7 +53,7 @@ Devuelve la relación específica entre un usuario y un rol, usando sus IDs.
 - Retorna error 404 si no existe la asignación.
 """
 )
-def read_userrol(id_user: int, id_rol: int, db: Session = Depends(get_db)):
+def read_userrol(id_user: str, id_rol: str, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.get_userrol(db=db, id_user=id_user, id_rol=id_rol)
     if db_userrol is None:
         raise HTTPException(status_code=404, detail="La asignación usuario-rol no existe.")
@@ -93,7 +93,7 @@ Modifica una relación específica entre un usuario y un rol.
 - Retorna error 404 si no se encuentra la asignación.
 """
 )
-def update_userrol(id_user: int, id_rol: int, userrol: schemas.usersrols.UserRolUpdate, db: Session = Depends(get_db)):
+def update_userrol(id_user: str, id_rol: str, userrol: schemas.usersrols.UserRolUpdate, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.update_userrol(db=db, id_user=id_user, id_rol=id_rol, userrol=userrol)
     if db_userrol is None:
         raise HTTPException(status_code=404, detail="La asignación no existe, no se actualizó.")
@@ -113,7 +113,7 @@ Elimina la relación entre un usuario y un rol.
 - Retorna error 404 si la relación no existe.
 """
 )
-def delete_userrol(id_user: int, id_rol: int, db: Session = Depends(get_db)):
+def delete_userrol(id_user: str, id_rol: str, db: Session = Depends(get_db)):
     db_userrol = crud.usersrols.delete_userrol(db=db, id_user=id_user, id_rol=id_rol)
     if db_userrol is None:
         raise HTTPException(status_code=404, detail="No se pudo eliminar, la asignación no existe.")

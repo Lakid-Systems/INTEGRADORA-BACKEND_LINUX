@@ -44,7 +44,7 @@ Obtiene los detalles de un servicio médico específico a partir de su ID.
 - Retorna error 404 si el servicio no existe.
 """
 )
-def read_serviceM(id: int, db: Session = Depends(get_db)):
+def read_serviceM(id: str, db: Session = Depends(get_db)):
     db_serviceM = crud.servicios_medicos.get_serviceM(db=db, id=id)
     if db_serviceM is None:
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
@@ -81,7 +81,7 @@ Actualiza los datos de un servicio médico existente por su ID.
 - Retorna error 404 si el servicio no existe.
 """
 )
-def update_serviceM(id: int, service: schemas.servicios_medicos.ServiceMUpdate, db: Session = Depends(get_db)):
+def update_serviceM(id: str, service: schemas.servicios_medicos.ServiceMUpdate, db: Session = Depends(get_db)):
     db_serviceM = crud.servicios_medicos.update_serviceM(db=db, id=id, service=service)
     if db_serviceM is None:
         raise HTTPException(status_code=404, detail="Servicio no encontrado")
@@ -99,7 +99,7 @@ Elimina un servicio médico registrado según su ID.
 - Retorna error 404 si el servicio no se encuentra.
 """
 )
-def delete_serviceM(id: int, db: Session = Depends(get_db)):
+def delete_serviceM(id: str, db: Session = Depends(get_db)):
     db_serviceM = crud.servicios_medicos.delete_serviceM(db=db, id=id)
     if db_serviceM is None:
         raise HTTPException(status_code=404, detail="Servicio no encontrado")

@@ -2,7 +2,6 @@
 """Esquemas Pydantic para Servicios Médicos y su asignación a Espacios."""
 
 import datetime
-from uuid import UUID
 from typing import Optional
 from pydantic import BaseModel, Field, constr
 
@@ -10,12 +9,8 @@ from pydantic import BaseModel, Field, constr
 class ServiciosMedicosEspaciosBase(BaseModel):
     """Esquema base para asignación de servicios médicos a espacios."""
 
-    fk_servicio: UUID = Field(
-        ..., example="a111b222-c333-4d44-8888-eeeeffff0000"
-    )
-    fk_espacio: UUID = Field(
-        ..., example="123e4567-e89b-12d3-a456-426614174000"
-    )
+    fk_servicio: str = Field(..., example="a111b222-c333-4d44-8888-eeeeffff0000")
+    fk_espacio: str = Field(..., example="123e4567-e89b-12d3-a456-426614174000")
     observaciones: Optional[constr(max_length=255)] = Field(
         None, example="Este consultorio se usa solo en el turno matutino."
     )
@@ -64,7 +59,7 @@ class ServiciosMedicosEspaciosUpdate(BaseModel):
 class ServiciosMedicosEspacios(ServiciosMedicosEspaciosBase):
     """Modelo de respuesta al consultar una asignación."""
 
-    id: UUID = Field(..., example="9999cccc-dddd-4eee-aaaa-bbbbccccdddd")
+    id: str = Field(..., example="9999cccc-dddd-4eee-aaaa-bbbbccccdddd")
     fecha_registro: Optional[datetime.datetime] = Field(
         None, example="2025-03-21T22:19:44.610Z"
     )
@@ -73,5 +68,4 @@ class ServiciosMedicosEspacios(ServiciosMedicosEspaciosBase):
     )
 
     class Config:
-        """Activa el modo ORM para compatibilidad con SQLAlchemy."""
         from_attributes = True

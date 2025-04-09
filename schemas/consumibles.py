@@ -4,16 +4,17 @@
 from datetime import datetime
 from uuid import UUID
 from typing import Optional
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field, constr
 
 class ConsumibleBase(BaseModel):
     """Base para los esquemas de consumibles médicos."""
 
     nombre: str = Field(..., example="Guantes de látex")
     descripcion: str = Field(..., example="Guantes estériles de un solo uso, talla mediana")
-    tipo: str = Field(..., example="Material Quirúrgico")
-    departamento: str = Field(..., example="Cirugía")
+    tipo: constr(max_length=50) = Field(..., example="Insumo")  # Coincide con el Enum
+    departamento_id: Optional[UUID] = Field(
+        None, example="2fc0d5d1-62b4-4a32-a9b7-9deac7f78d19"
+    )
     cantidad_existencia: int = Field(..., example=150)
     detalle: Optional[str] = Field(None, example="Caja con 100 unidades")
     estatus: Optional[bool] = Field(None, example=True)
@@ -38,8 +39,8 @@ class ConsumibleUpdate(BaseModel):
 
     nombre: Optional[str] = Field(None, example="Guantes de nitrilo")
     descripcion: Optional[str] = Field(None, example="Guantes hipoalergénicos, talla grande")
-    tipo: Optional[str] = Field(None, example="Material Quirúrgico")
-    departamento: Optional[str] = Field(None, example="Urgencias")
+    tipo: Optional[constr(max_length=50)] = Field(None, example="Equipo")
+    departamento_id: Optional[UUID] = Field(None, example="2fc0d5d1-62b4-4a32-a9b7-9deac7f78d19")
     cantidad_existencia: Optional[int] = Field(None, example=200)
     detalle: Optional[str] = Field(None, example="Caja con 50 pares")
     estatus: Optional[bool] = Field(None, example=False)
@@ -57,5 +58,4 @@ class Consumible(ConsumibleBase):
     id: UUID = Field(..., example="3e79d145-397a-4e50-bb74-8c6a88c93fa2")
 
     class Config:
-        """Activa el modo ORM para compatibilidad con SQLAlchemy."""
-        orm_mode = True
+        from_attributes = True

@@ -1,35 +1,23 @@
-import models.persons
-import schemas.persons
 from sqlalchemy.orm import Session
-import models, schemas
+from datetime import datetime
+import models.persons as models
+import schemas.persons as schemas
 
-# 🔹 Obtener una persona por su ID
-def get_person(db: Session, id: int):
-    """
-    Retorna una persona por su ID.
-    """
-    return db.query(models.persons.Person).filter(models.persons.Person.ID == id).first()
+# 🔹 Obtener una persona por ID (UUID como string)
+def get_person(db: Session, id: str):
+    return db.query(models.Person).filter(models.Person.ID == id).first()
 
-# 🔹 Obtener una persona por su nombre (exacto)
+# 🔹 Obtener una persona por nombre exacto
 def get_person_by_nombre(db: Session, person: str):
-    """
-    Retorna la primera persona que coincida exactamente con el nombre.
-    """
-    return db.query(models.persons.Person).filter(models.persons.Person.Nombre == person).first()
+    return db.query(models.Person).filter(models.Person.Nombre == person).first()
 
 # 🔹 Obtener todas las personas con paginación
 def get_persons(db: Session, skip: int = 0, limit: int = 10):
-    """
-    Retorna una lista paginada de personas registradas.
-    """
-    return db.query(models.persons.Person).offset(skip).limit(limit).all()
+    return db.query(models.Person).offset(skip).limit(limit).all()
 
 # 🔹 Crear una nueva persona
-def create_person(db: Session, person: schemas.persons.PersonCreate):
-    """
-    Crea y guarda una nueva persona en la base de datos.
-    """
-    db_person = models.persons.Person(
+def create_person(db: Session, person: schemas.PersonCreate):
+    db_person = models.Person(
         Titulo_Cortesia=person.Titulo_Cortesia,
         Nombre=person.Nombre,
         Primer_Apellido=person.Primer_Apellido,
@@ -51,24 +39,20 @@ def create_person(db: Session, person: schemas.persons.PersonCreate):
     return db_person
 
 # 🔹 Actualizar una persona existente
-def update_person(db: Session, id: int, person: schemas.persons.PersonUpdate):
-    """
-    Actualiza los datos de una persona. Solo los campos proporcionados serán modificados.
-    """
-    db_person = db.query(models.persons.Person).filter(models.persons.Person.ID == id).first()
+def update_person(db: Session, id: str, person: schemas.PersonUpdate):
+    db_person = db.query(models.Person).filter(models.Person.ID == id).first()
     if db_person:
-        for var, value in vars(person).items():
-            setattr(db_person, var, value) if value else None
+        for key, value in person.dict(exclude_unset=True).items():
+            if value is not None:
+                setattr(db_person, key, value)
+        db_person.Fecha_Actualizacion = datetime.utcnow()
         db.commit()
         db.refresh(db_person)
     return db_person
 
 # 🔹 Eliminar una persona por ID
-def delete_person(db: Session, id: int):
-    """
-    Elimina una persona de la base de datos según su ID.
-    """
-    db_person = db.query(models.persons.Person).filter(models.persons.Person.ID == id).first()
+def delete_person(db: Session, id: str):
+    db_person = db.query(models.Person).filter(models.Person.ID == id).first()
     if db_person:
         db.delete(db_person)
         db.commit()

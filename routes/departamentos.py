@@ -51,7 +51,7 @@ Devuelve los detalles de un departamento específico a partir de su ID.
 - Retorna error 404 si no existe.
 """
 )
-def get_departamento(id: int, db: Session = Depends(get_db)):
+def get_departamento(id: str, db: Session = Depends(get_db)):
     departamento = crud.get_departamento(db, id)
     if departamento is None:
         raise HTTPException(status_code=404, detail="Departamento no encontrado")
@@ -84,7 +84,7 @@ Actualiza la información de un departamento existente.
 - Retorna error 404 si no se encuentra el departamento.
 """
 )
-def update_departamento(id: int, departamento_data: schemas.DepartamentoUpdate, db: Session = Depends(get_db)):
+def update_departamento(id: str, departamento_data: schemas.DepartamentoUpdate, db: Session = Depends(get_db)):
     db_departamento = crud.update_departamento(db, id, departamento_data)
     if db_departamento is None:
         raise HTTPException(status_code=404, detail="Departamento no encontrado")
@@ -103,7 +103,7 @@ Elimina un departamento del sistema según su ID.
 - Retorna error 404 si el departamento no existe.
 """
 )
-def delete_departamento(id: int, db: Session = Depends(get_db)):
+def delete_departamento(id: str, db: Session = Depends(get_db)):
     db_departamento = crud.delete_departamento(db, id)
     if db_departamento is None:
         raise HTTPException(status_code=404, detail="Departamento no encontrado")

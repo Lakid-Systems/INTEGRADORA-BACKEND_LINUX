@@ -2,6 +2,7 @@
 """Rutas de FastAPI para gestionar los consumibles médicos."""
 
 from typing import List
+from uuid import UUID
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from portadortoken import Portador
@@ -39,9 +40,6 @@ Devuelve una lista paginada de todos los consumibles disponibles en inventario.
 """
 )
 def read_consumibles(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    """
-    Endpoint para listar consumibles disponibles (protegido).
-    """
     return crud.consumibles.get_consumibles(db=db, skip=skip, limit=limit)
 
 
@@ -58,10 +56,7 @@ Obtiene los detalles de un consumible específico a partir de su ID.
 - Retorna error 404 si no existe.
 """
 )
-def read_consumible(id: int, db: Session = Depends(get_db)):
-    """
-    Endpoint para obtener un consumible por ID (protegido).
-    """
+def read_consumible(id: UUID, db: Session = Depends(get_db)):  # 🟢 Cambiado a UUID
     db_consumible = crud.consumibles.get_consumible(db=db, id=id)
     if db_consumible is None:
         raise HTTPException(status_code=404, detail="Consumible no encontrado")
@@ -84,9 +79,6 @@ def create_consumible(
     consumible: schemas.consumibles.ConsumibleCreate,
     db: Session = Depends(get_db)
 ):
-    """
-    Endpoint para crear un consumible (libre).
-    """
     db_consumible = crud.consumibles.get_consumibles_by_nombre(
         db, nombre=consumible.nombre
     )
@@ -112,13 +104,10 @@ Actualiza la información de un consumible existente.
 """
 )
 def update_consumible(
-    id: int,
+    id: UUID,  # 🟢 Cambiado a UUID
     consumible: schemas.consumibles.ConsumibleUpdate,
     db: Session = Depends(get_db)
 ):
-    """
-    Endpoint para actualizar un consumible (protegido).
-    """
     db_consumible = crud.consumibles.update_consumible(
         db=db, id=id, consumible=consumible
     )
@@ -143,10 +132,7 @@ Elimina un consumible existente por su ID.
 - Retorna error 404 si el consumible no existe.
 """
 )
-def delete_consumible(id: int, db: Session = Depends(get_db)):
-    """
-    Endpoint para eliminar un consumible por ID (protegido).
-    """
+def delete_consumible(id: UUID, db: Session = Depends(get_db)):  #  Cambiado a UUID
     db_consumible = crud.consumibles.delete_consumible(db=db, id=id)
     if db_consumible is None:
         raise HTTPException(

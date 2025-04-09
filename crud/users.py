@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 import models, schemas
 
 # 🔹 Obtener un usuario por ID (PK)
-def get_user(db: Session, id: int):
+def get_user(db: Session, id: str):
     """
     Retorna un usuario por su ID.
     """
@@ -66,7 +66,7 @@ def create_user(db: Session, user: schemas.users.UserCreate):
     return db_user
 
 # 🔹 Actualizar un usuario por ID
-def update_user(db: Session, id: int, user: schemas.users.UserUpdate):
+def update_user(db: Session, id: str, user: schemas.users.UserUpdate):
     """
     Actualiza los datos de un usuario existente. Solo modifica los campos proporcionados.
     """
@@ -79,7 +79,7 @@ def update_user(db: Session, id: int, user: schemas.users.UserUpdate):
     return db_user
 
 # 🔹 Eliminar un usuario por ID
-def delete_user(db: Session, id: int):
+def delete_user(db: Session, id: str):
     """
     Elimina un usuario de la base de datos según su ID.
     """

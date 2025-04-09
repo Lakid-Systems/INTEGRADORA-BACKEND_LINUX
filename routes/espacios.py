@@ -47,7 +47,7 @@ Consulta la información detallada de un espacio específico a partir de su ID.
 - Retorna error 404 si no existe.
 """
 )
-def read_espacio(id: int, db: Session = Depends(get_db)):
+def read_espacio(id: str, db: Session = Depends(get_db)):
     db_espacio = crud.get_espacio(db=db, espacio_id=id)
     if db_espacio is None:
         raise HTTPException(status_code=404, detail="Espacio no encontrado")
@@ -83,7 +83,7 @@ Actualiza la información de un espacio existente usando su ID.
 - Retorna 404 si el espacio no existe.
 """
 )
-def update_espacio(id: int, espacio_data: schemas.EspacioUpdate, db: Session = Depends(get_db)):
+def update_espacio(id: str, espacio_data: schemas.EspacioUpdate, db: Session = Depends(get_db)):
     db_espacio = crud.update_espacio(db=db, espacio_id=id, espacio=espacio_data)
     if db_espacio is None:
         raise HTTPException(status_code=404, detail="Espacio no encontrado")
@@ -104,7 +104,7 @@ Elimina un espacio del sistema utilizando su ID.
 - Devuelve un mensaje de confirmación si fue exitoso.
 """
 )
-def delete_espacio(id: int, db: Session = Depends(get_db)):
+def delete_espacio(id: str, db: Session = Depends(get_db)):
     db_espacio = crud.delete_espacio(db=db, espacio_id=id)
     if db_espacio is None:
         raise HTTPException(status_code=404, detail="Espacio no encontrado")

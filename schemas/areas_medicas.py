@@ -2,7 +2,6 @@
 """Esquemas Pydantic para el modelo de Área Médica."""
 
 from datetime import datetime
-from uuid import UUID
 from typing import Optional
 from pydantic import BaseModel, Field
 
@@ -67,7 +66,7 @@ class AreaMedicaUpdate(BaseModel):
 class AreaMedica(AreaMedicaBase):
     """Modelo para la respuesta al consultar un área médica."""
 
-    ID: UUID = Field(
+    ID: str = Field(
         ...,
         example="9b4e1bc0-8129-4cf5-9e7c-1c802e60decd",
         description="Identificador único del área médica"

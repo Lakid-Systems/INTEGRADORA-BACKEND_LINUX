@@ -4,52 +4,17 @@ from sqlalchemy.orm import Session
 import models.servicios_medicos_consumibles
 import schemas.servicios_medicos_consumibles
 
-def get_by_id(db: Session, id: int):  # pylint: disable=redefined-builtin
-    """
-    Obtiene un registro por su ID.
-
-    Args:
-        db (Session): Sesión de base de datos.
-        id (int): Identificador del registro.
-
-    Returns:
-        ServiciosMedicosConsumibles: Instancia encontrada o None.
-    """
+def get_by_id(db: Session, id: str): 
     return db.query(models.servicios_medicos_consumibles.ServiciosMedicosConsumibles).filter(
         models.servicios_medicos_consumibles.ServiciosMedicosConsumibles.id == id
     ).first()
 
-
 def get_all(db: Session, skip: int = 0, limit: int = 10):
-    """
-    Obtiene todos los registros con paginación.
-
-    Args:
-        db (Session): Sesión de base de datos.
-        skip (int): Registros a omitir.
-        limit (int): Cantidad máxima de registros.
-
-    Returns:
-        List[ServiciosMedicosConsumibles]: Lista de registros.
-    """
     return db.query(models.servicios_medicos_consumibles.ServiciosMedicosConsumibles).offset(
         skip
     ).limit(limit).all()
 
-
-def create(
-    db: Session, data: schemas.servicios_medicos_consumibles.ServiciosMedicosConsumiblesCreate
-):
-    """
-    Crea un nuevo registro de consumo de servicio médico.
-
-    Args:
-        db (Session): Sesión de base de datos.
-        data (ServiciosMedicosConsumiblesCreate): Datos del nuevo registro.
-
-    Returns:
-        ServiciosMedicosConsumibles: Instancia creada.
-    """
+def create(db: Session, data: schemas.servicios_medicos_consumibles.ServiciosMedicosConsumiblesCreate):
     db_record = models.servicios_medicos_consumibles.ServiciosMedicosConsumibles(
         id_servicio=data.id_servicio,
         id_consumible=data.id_consumible,
@@ -60,25 +25,9 @@ def create(
     db.add(db_record)
     db.commit()
     db.refresh(db_record)
-    return db_record
+    return db_record 
 
-
-def update(
-    db: Session,
-    id: int,  # pylint: disable=redefined-builtin
-    data: schemas.servicios_medicos_consumibles.ServiciosMedicosConsumiblesUpdate
-):
-    """
-    Actualiza los datos de un registro existente.
-
-    Args:
-        db (Session): Sesión de base de datos.
-        id (int): ID del registro a modificar.
-        data (ServiciosMedicosConsumiblesUpdate): Campos a actualizar.
-
-    Returns:
-        ServiciosMedicosConsumibles: Instancia actualizada o None si no se encontró.
-    """
+def update(db: Session, id: str, data: schemas.servicios_medicos_consumibles.ServiciosMedicosConsumiblesUpdate):  # <- CAMBIO A str
     db_record = db.query(models.servicios_medicos_consumibles.ServiciosMedicosConsumibles).filter(
         models.servicios_medicos_consumibles.ServiciosMedicosConsumibles.id == id
     ).first()
@@ -89,18 +38,7 @@ def update(
         db.refresh(db_record)
     return db_record
 
-
-def delete(db: Session, id: int):  # pylint: disable=redefined-builtin
-    """
-    Elimina un registro por su ID.
-
-    Args:
-        db (Session): Sesión de base de datos.
-        id (int): ID del registro a eliminar.
-
-    Returns:
-        ServiciosMedicosConsumibles: Instancia eliminada o None si no se encontró.
-    """
+def delete(db: Session, id: str): 
     db_record = db.query(models.servicios_medicos_consumibles.ServiciosMedicosConsumibles).filter(
         models.servicios_medicos_consumibles.ServiciosMedicosConsumibles.id == id
     ).first()

@@ -52,12 +52,11 @@ Devuelve la información de un rol específico a partir de su ID.
 - Retorna error 404 si no se encuentra.
 """
 )
-def read_rol(id: int, db: Session = Depends(get_db)):
+def read_rol(id: str, db: Session = Depends(get_db)):
     db_rol = crud.rols.get_rol(db=db, id=id)
     if db_rol is None:
         raise HTTPException(status_code=404, detail="Rol not found")
     return db_rol
-
 
 # 🔹 Crear nuevo rol (PROTEGIDO)
 @rol.post(
@@ -93,7 +92,7 @@ Actualiza los datos de un rol existente.
 - Retorna error 404 si el rol no existe.
 """
 )
-def update_rol(id: int, rol: schemas.rols.RolUpdate, db: Session = Depends(get_db)):
+def update_rol(id: str, rol: schemas.rols.RolUpdate, db: Session = Depends(get_db)):
     db_rol = crud.rols.update_rol(db=db, id=id, rol=rol)
     if db_rol is None:
         raise HTTPException(status_code=404, detail="Usuario no existe, no actualizado")
@@ -113,7 +112,7 @@ Elimina un rol del sistema por su ID.
 - Retorna error 404 si no se encuentra.
 """
 )
-def delete_rol(id: int, db: Session = Depends(get_db)):
+def delete_rol(id: str, db: Session = Depends(get_db)):
     db_rol = crud.rols.delete_rol(db=db, id=id)
     if db_rol is None:
         raise HTTPException(status_code=404, detail="Usuario no existe, no se pudo eliminar")
