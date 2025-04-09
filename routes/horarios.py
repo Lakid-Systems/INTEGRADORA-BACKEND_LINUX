@@ -1,12 +1,19 @@
-from fastapi import APIRouter, HTTPException, Depends
+# routes/horarios.py
+
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-import crud.horarios, config.db, schemas.horarios, models.horarios
 from typing import List
+import config.db
+from portadortoken import Portador
 
+import schemas.horarios as schemas
+import models.horarios as models
+import crud.horarios as crud
 
-horarios = APIRouter()
-
-models.horarios.Base.metadata.create_all(bind=config.db.engine)
+horarios_router = APIRouter(
+    prefix="/horarios",
+    tags=["Horarios"]
+)
 
 def get_db():
     db = config.db.SessionLocal()
@@ -15,32 +22,31 @@ def get_db():
     finally:
         db.close()
 
-@horarios.get("/horarios/", response_model=List[schemas.horarios.Horario], tags=["Horarios"])
-def read_horarios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
-    db_horarios = crud.horarios.get_horarios(db=db, skip=skip, limit=limit)
-    return db_horarios
+@horarios_router.get("/", response_model=List[schemas.Horario], dependencies=[Depends(Portador())])
+def listar_horarios(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
+    return crud.get_horarios(db, skip=skip, limit=limit)
 
-@horarios.get("/horario/{horario_id}", response_model=schemas.horarios.Horario, tags=["Horarios"])
-def read_horario(horario_id: int, db: Session = Depends(get_db)):
-    db_horario = crud.horarios.get_horario(db=db, horario_id=horario_id)
+@horarios_router.get("/{id}", response_model=schemas.Horario, dependencies=[Depends(Portador())])
+def obtener_horario(id: str, db: Session = Depends(get_db)):  # ID como str
+    horario = crud.get_horario(db, id)
+    if not horario:
+        raise HTTPException(status_code=404, detail="Horario no encontrado")
+    return horario
+
+@horarios_router.post("/", response_model=schemas.Horario)
+def crear_horario(horario: schemas.HorarioCreate, db: Session = Depends(get_db)):
+    return crud.create_horario(db, horario)
+
+@horarios_router.put("/{id}", response_model=schemas.Horario, dependencies=[Depends(Portador())])
+def actualizar_horario(id: str, horario: schemas.HorarioUpdate, db: Session = Depends(get_db)):  # ID como str
+    db_horario = crud.update_horario(db, id, horario)
     if db_horario is None:
         raise HTTPException(status_code=404, detail="Horario no encontrado")
     return db_horario
 
-@horarios.post("/horario/", response_model=schemas.horarios.Horario, tags=["Horarios"])
-def create_horario(horario: schemas.horarios.HorarioCreate, db: Session = Depends(get_db)):
-    return crud.horarios.create_horario(db=db, horario=horario)
-
-@horarios.put("/horario/{horario_id}", response_model=schemas.horarios.Horario, tags=["Horarios"])
-def update_horario(horario_id: int, horario: schemas.horarios.HorarioUpdate, db: Session = Depends(get_db)):
-    db_horario = crud.horarios.update_horario(db=db, horario_id=horario_id, horario=horario)
+@horarios_router.delete("/{id}", response_model=dict, dependencies=[Depends(Portador())])
+def eliminar_horario(id: str, db: Session = Depends(get_db)):  # ID como str
+    db_horario = crud.delete_horario(db, id)
     if db_horario is None:
-        raise HTTPException(status_code=404, detail="Horario no encontrado, no actualizado")
-    return db_horario
-
-@horarios.delete("/horario/{horario_id}", response_model=schemas.horarios.Horario, tags=["Horarios"])
-def delete_horario(horario_id: int, db: Session = Depends(get_db)):
-    db_horario = crud.horarios.delete_horario(db=db, horario_id=horario_id)
-    if db_horario is None:
-        raise HTTPException(status_code=404, detail="Horario no encontrado, no se pudo eliminar")
-    return db_horario
+        raise HTTPException(status_code=404, detail="Horario no encontrado")
+    return {"message": "Horario eliminado correctamente"}

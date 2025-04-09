@@ -1,25 +1,18 @@
-from sqlalchemy import Column, Integer, String, Text, DECIMAL, Enum, DateTime
-from sqlalchemy.ext.declarative import declarative_base
+# models/puestos.py
+
+import uuid
 from datetime import datetime
-import enum
-
-Base = declarative_base()
-
-class TurnoEnum(str, enum.Enum):
-    Mañana = "Mañana"
-    Tarde = "Tarde"
-    Noche = "Noche"
+from sqlalchemy import Column, String, Boolean, DateTime, ForeignKey
+from config.db import Base
 
 class Puesto(Base):
-    __tablename__ = "tbc_puestos"
+    __tablename__ = "tbd_puestos"
 
-    PuestoID = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    Nombre = Column(String(100), nullable=False)
-    Descripcion = Column(Text, nullable=True)
-    Salario = Column(DECIMAL(10, 2), nullable=True)
-    Turno = Column(Enum(TurnoEnum), nullable=True)
-    Creado = Column(DateTime, nullable=True, default=datetime.utcnow)
-    Modificado = Column(DateTime, nullable=True, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    def __repr__(self):
-        return f"<Puesto(PuestoID={self.PuestoID}, Nombre='{self.Nombre}', Turno='{self.Turno}')>"
+    id = Column(String(36), primary_key=True, index=True, default=lambda: str(uuid.uuid4()))  # UUID como string
+    nombre = Column(String(100), nullable=False)
+    descripcion = Column(String(255), nullable=True)
+    departamento_id = Column(String(36), ForeignKey("tbc_departamentos.id"), nullable=False)  # UUID como string
+    estatus = Column(Boolean, default=True)
+    fecha_registro = Column(DateTime, default=datetime.utcnow)
+    fecha_actualizacion = Column(DateTime, nullable=True, onupdate=datetime.utcnow)
+    
